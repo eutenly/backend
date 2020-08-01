@@ -1,13 +1,16 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo"
 )
 
-func apiRouter(e *echo.Echo) {
-	e.GET("/api", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Eutenly Backend")
-	})
+func apiRouter(app *echo.Echo) {
+	//myEutenly Routes
+	myEutenlyRoutes(app)
+
+	//Discord API Routes
+	discordAuthenticationRoutes(app)
+
+	//top.gg webhook
+	topggWebhook(app)
 }
