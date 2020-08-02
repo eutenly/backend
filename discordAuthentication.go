@@ -38,8 +38,6 @@ func discordAuthenticationRoutes(e *echo.Echo) {
 
 	//Discord Auth Route
 	e.GET("/auth/discord", func(c echo.Context) error {
-		sess, _ := session.Get("session", c)
-
 		//Get OAUTH2 login code
 		authCode := c.QueryParam("code")
 
@@ -59,19 +57,18 @@ func discordAuthenticationRoutes(e *echo.Echo) {
 		if err != nil {
 			return c.String(http.StatusUnauthorized, "A Discord request error occured. "+err.Error())
 		}
+		sess, _ := session.Get("session", c)
 
 		//Store Discord details in Session and save
 		sess.Values["authed"] = true
 		sess.Values["discord_accessToken"] = accessToken
-
-		sess.Values["discord_user"] = authenticatedUser
 		sess.Values["discord_username"] = authenticatedUser.Username
 		sess.Values["discord_discrim"] = authenticatedUser.Discriminator
 		sess.Values["discord_id"] = authenticatedUser.ID
-		sess.Values["discord_avatarurl"] = fmt.Sprintf("https://cdn.discordapp.com/avatars/%v/%v.png?size=256", authenticatedUser.ID, authenticatedUser.AvatarID)
-		sess.Save(c.Request(), c.Response())
+		//sess.Values["discord_avatarurl"] = fmt.Sprintf("https://cdn.discordapp.com/avatars/%v/%v.png?size=256", authenticatedUser.ID, authenticatedUser.AvatarID)
 
 		//Respond
+		sess.Save(c.Request(), c.Response())
 		return c.String(http.StatusOK, "Resp: "+accessToken)
 	})
 
