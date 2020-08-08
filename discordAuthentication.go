@@ -96,13 +96,13 @@ func authenticateDiscord(authCode string) (accessToken string, rErr error) {
 	defer response.Body.Close()
 
 	//Format response body
-	var responseFormat authResp
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return "err", err
 	}
 
 	//Format JSON into an object Struct
+	var responseFormat authResp
 	err = json.Unmarshal(body, &responseFormat)
 	if err != nil {
 		return "err", err
