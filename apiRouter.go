@@ -8,8 +8,10 @@ func apiRouter(app *echo.Echo) {
 	//myEutenly Routes
 	myEutenlyRoutes(app)
 
-	//Discord API Routes
+	//Authentication Routes
 	discordAuthenticationRoutes(app)
+	githubAuthenticationRoutes(app)
+	twitterAuthenticationRoutes(app)
 
 	//top.gg webhook
 	topggWebhook(app)

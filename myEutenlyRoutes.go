@@ -8,15 +8,16 @@ import (
 	"github.com/labstack/echo-contrib/session"
 )
 
-type myAccount struct {
-	Username    string       `json:"discord_username"`
-	ID          string       `json:"discord_id"`
-	Connections []connection `json:"connections"`
-}
-
 type connection struct {
 	Service  string `json:"service"`
 	Username string `json:"username"`
+}
+
+type accountDetails struct {
+	Username    string       `json:"username"`
+	Discrim     string       `json:"discrim"`
+	ID          string       `json:"id"`
+	Connections []connection `json:"connections"`
 }
 
 func myEutenlyRoutes(e *echo.Echo) {
@@ -33,8 +34,9 @@ func myEutenlyRoutes(e *echo.Echo) {
 
 		//Create account object
 		var userconnections []connection
-		u := &myAccount{
+		u := &accountDetails{
 			Username:    fmt.Sprint(sess.Values["discord_username"]),
+			Discrim:     fmt.Sprint(sess.Values["discord_discrim"]),
 			ID:          fmt.Sprint(sess.Values["discord_id"]),
 			Connections: userconnections,
 		}
@@ -42,12 +44,4 @@ func myEutenlyRoutes(e *echo.Echo) {
 		//Serve
 		return c.JSON(http.StatusOK, u)
 	})
-	// e.GET("/api/demo-login", func(c echo.Context) error {
-	// 	sess, _ := session.Get("session", c)
-	// 	sess.Values["authed"] = true
-	// 	sess.Values["discord_username"] = "Maia#1234"
-	// 	sess.Values["discord_id"] = "149862827027464193"
-	// 	sess.Save(c.Request(), c.Response())
-	// 	return c.String(http.StatusAccepted, "Logged in")
-	// })
 }

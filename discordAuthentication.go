@@ -77,7 +77,7 @@ func discordAuthenticationRoutes(e *echo.Echo) {
 		sess, _ := session.Get("session", c)
 		sess.Values["authed"] = false
 		sess.Save(c.Request(), c.Response())
-		return c.Redirect(http.StatusPermanentRedirect, "/?msg='logged out'")
+		return c.Redirect(http.StatusTemporaryRedirect, "/?logout")
 	})
 }
 
