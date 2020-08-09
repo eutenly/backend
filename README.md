@@ -20,6 +20,13 @@ To run the app you'll need a .env file in the same directory which the binary ru
 
 `SESSION_SECRET=`
 
+`GITHUB_CLIENT_ID=`
+`GITHUB_CLIENT_SECRET=`
+
+`TWITTER_KEY=`
+`TWITTER_SECRET=`
+
+`MONGO_URI=`
 
 ---
 
