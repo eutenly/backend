@@ -3,11 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -43,21 +41,5 @@ func connectDatabase() error {
 
 	dbClient = client
 
-	collection := client.Database("eutenlyapixel").Collection("users")
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	var episodes []bson.M
-	if err = cursor.All(ctx, &episodes); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(episodes)
-
 	return nil
 }
-
-// func getUser(userID string) {
-// 	collection := dbClient.Database("eutenlymaia").Collection("users")
-// 	//collection.Find()
-// }

@@ -41,5 +41,5 @@ func main() {
 
 	//Start server
 	fmt.Println("Starting Echo...")
-	e.Logger.Fatal(e.Start(fmt.Sprintf("192.168.178.128:%v", os.Getenv("PORT"))))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%v", os.Getenv("PORT"))))
 }
