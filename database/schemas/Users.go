@@ -23,7 +23,7 @@ type savedLink struct {
 type Users struct {
 	ID                  string                `bson:"_id,omitempty"`
 	Connections         map[string]connection `bson:"connections,omitempty"`
-	SavedLinks          map[string]savedLink  `bson:"savedLinks,omitempty"`
+	SavedLinks          []savedLink           `bson:"savedLinks,omitempty"`
 	VoteExpireTimestamp int                   `bson:"voteExpireTimestamp,omitempty"`
 	PatreonTier         int                   `bson:"patreonTier,omitempty"`
 }
