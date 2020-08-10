@@ -24,6 +24,6 @@ type Users struct {
 	ID                  string                `bson:"_id,omitempty"`
 	Connections         map[string]connection `bson:"connections,omitempty"`
 	SavedLinks          []savedLink           `bson:"savedLinks,omitempty"`
-	VoteExpireTimestamp int                   `bson:"voteExpireTimestamp,omitempty"`
-	PatreonTier         int                   `bson:"patreonTier,omitempty"`
+	VoteExpireTimestamp int32                 `bson:"voteExpireTimestamp,omitempty"`
+	PatreonTier         int32                 `bson:"patreonTier,omitempty"`
 }
