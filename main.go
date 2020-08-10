@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"./database"
+
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
@@ -21,7 +23,7 @@ func main() {
 	}
 
 	//Connect to database
-	dberr := connectDatabase()
+	dberr := database.Connect()
 	if dberr != nil {
 		log.Fatalf("Cannot connect to DB: " + dberr.Error())
 	}
