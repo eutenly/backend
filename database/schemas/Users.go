@@ -1,4 +1,4 @@
-package schema
+package schemas
 
 //Users is the schema for the users collection
 type Users struct {
