@@ -2,16 +2,17 @@ package database
 
 import (
 	"context"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 //FindOne finds a document with `filter` in `collection`
-func FindOne(collection string, filter map[string]interface{}) (result *mongo.SingleResult) {
+func FindOne(collection string, filter map[string]interface{}) (result map[string]interface{}, err error) {
 
 	//Run query
-	result = db.Collection(collection).FindOne(context.Background(), filter)
+	err = db.Collection(collection).FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
 
 	//Return
-	return result
+	return result, nil
 }

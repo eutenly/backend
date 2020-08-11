@@ -1,13 +1,14 @@
 package schemas
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/mitchellh/mapstructure"
 )
 
 //ToUser converts a document to a User
-func ToUser(data *mongo.SingleResult) (user Users, returnErr error) {
+func ToUser(data map[string]interface{}) (user Users, returnErr error) {
 
-	err := data.Decode(&user)
+	//Parse data
+	err := mapstructure.Decode(data, &user)
 	if err != nil {
 		returnErr = err
 		return
