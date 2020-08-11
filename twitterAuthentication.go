@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
+	twitter "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"github.com/dghubble/oauth1/twitter"
+	twitterAuth "github.com/dghubble/oauth1/twitter"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
 )
@@ -16,7 +17,7 @@ func twitterAuthenticationRoutes(e *echo.Echo) {
 		ConsumerKey:    os.Getenv("TWITTER_KEY"),
 		ConsumerSecret: os.Getenv("TWITTER_SECRET"),
 		CallbackURL:    os.Getenv("WEBSERVER_URL") + "/auth/twitter",
-		Endpoint:       twitter.AuthorizeEndpoint,
+		Endpoint:       twitterAuth.AuthorizeEndpoint,
 	}
 
 	e.GET("/login/twitter", func(c echo.Context) error {
@@ -61,7 +62,21 @@ func twitterAuthenticationRoutes(e *echo.Echo) {
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
-		return c.String(http.StatusAccepted, accessSecret+" "+accessToken)
+
+		//Login as user to get Twitter ID
+		config := oauth1.NewConfig(os.Getenv("TWITTER_KEY"), os.Getenv("TWITTER_SECRET"))
+		token := oauth1.NewToken(accessToken, accessSecret)
+		httpClient := config.Client(oauth1.NoContext, token)
+
+		// Twitter client
+		twitterClient := twitter.NewClient(httpClient)
+
+		authedUser, _, err := twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
+		if err != nil {
+			return c.String(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.String(http.StatusAccepted, fmt.Sprintf("UserID: %v; accessToken: %v; accessSecret %v;", authedUser.ID, accessToken, accessSecret))
 	})
 
 }
