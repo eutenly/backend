@@ -27,6 +27,7 @@ To run the app you'll need a .env file in the same directory which the binary ru
 `TWITTER_SECRET=`
 
 `MONGO_URI=`
+`MONGO_DATABASE=`
 
 ---
 
