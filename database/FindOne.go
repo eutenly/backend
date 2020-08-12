@@ -9,7 +9,7 @@ func FindOne(collection string, filter ...map[string]interface{}) (result map[st
 
 	//Empty filter
 	if filter == nil {
-		filter = []map[string]interface{}{}
+		filter = []map[string]interface{}{{}}
 	}
 
 	//Run query
