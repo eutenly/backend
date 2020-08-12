@@ -26,6 +26,8 @@ To run the app you'll need a .env file in the same directory which the binary ru
 `TWITTER_KEY=`
 `TWITTER_SECRET=`
 
+`TOPGG_WEBHOOK_SECRET=`
+
 `MONGO_URI=`
 `MONGO_DATABASE=`
 
@@ -38,3 +40,5 @@ To run the app you'll need a .env file in the same directory which the binary ru
 The `DISCORD` stuff is self-explanatory. 
 
 `SESSION_SECRET` is what's used to encrypt session storage. Set it to whatever you want. In production this should be a long randomly generated password.
+
+`TOPGG_WEBHOOK_SECRET` is the webhook secret for Top.GG
