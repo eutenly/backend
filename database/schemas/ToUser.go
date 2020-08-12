@@ -5,7 +5,7 @@ import (
 )
 
 //ToUser converts a document to a User
-func ToUser(data map[string]interface{}) (user Users, returnErr error) {
+func ToUser(data map[string]interface{}) (user User, returnErr error) {
 
 	//Parse data
 	err := mapstructure.Decode(data, &user)

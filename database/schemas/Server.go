@@ -6,15 +6,15 @@ import (
 	"github.com/r3labs/diff"
 )
 
-//Servers is the schema for the Servers collection
-type Servers struct {
+//Server is the schema for the servers collection
+type Server struct {
 	ID      string                 `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
 	OldData map[string]interface{} `structs:"oldData,omitempty"`
 	Prefix  string                 `bson:"prefix,omitempty" structs:"prefix,omitempty"`
 }
 
 //Save saves a document
-func (server Servers) Save() {
+func (server Server) Save() {
 
 	//Get data
 	data := structs.Map(server)
@@ -34,7 +34,7 @@ func (server Servers) Save() {
 }
 
 //Delete deletes a document
-func (server Servers) Delete() {
+func (server Server) Delete() {
 
 	//Run query
 	database.FindOneAndDelete("servers", map[string]interface{}{"_id": server.ID})

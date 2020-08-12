@@ -5,10 +5,10 @@ import (
 )
 
 //ToUsers converts documents to Users
-func ToUsers(data []bson.M) (users []Users, returnErr error) {
+func ToUsers(data []bson.M) (users []User, returnErr error) {
 
 	//Define result
-	var result = make([]Users, len(data))
+	var result = make([]User, len(data))
 
 	//Loop through data
 	for k, document := range data {

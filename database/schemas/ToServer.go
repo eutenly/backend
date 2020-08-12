@@ -5,7 +5,7 @@ import (
 )
 
 //ToServer converts a document to a server
-func ToServer(data map[string]interface{}) (server Servers, returnErr error) {
+func ToServer(data map[string]interface{}) (server Server, returnErr error) {
 
 	//Parse data
 	err := mapstructure.Decode(data, &server)

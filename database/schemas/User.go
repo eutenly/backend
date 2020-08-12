@@ -28,8 +28,8 @@ type SavedLink struct {
 	Note string `bson:"note,omitempty" structs:"note,omitempty"`
 }
 
-//Users is the schema for the users collection
-type Users struct {
+//User is the schema for the users collection
+type User struct {
 	ID                  string                 `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
 	OldData             map[string]interface{} `structs:"oldData,omitempty"`
 	Connections         map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
@@ -39,7 +39,7 @@ type Users struct {
 }
 
 //Save saves a document
-func (user Users) Save() {
+func (user User) Save() {
 
 	//Get data
 	data := structs.Map(user)
@@ -59,7 +59,7 @@ func (user Users) Save() {
 }
 
 //Delete deletes a document
-func (user Users) Delete() {
+func (user User) Delete() {
 
 	//Run query
 	database.FindOneAndDelete("users", map[string]interface{}{"_id": user.ID})

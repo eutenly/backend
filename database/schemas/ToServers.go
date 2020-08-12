@@ -5,10 +5,10 @@ import (
 )
 
 //ToServers converts documents to Servers
-func ToServers(data []bson.M) (servers []Servers, returnErr error) {
+func ToServers(data []bson.M) (servers []Server, returnErr error) {
 
 	//Define result
-	var result = make([]Servers, len(data))
+	var result = make([]Server, len(data))
 
 	//Loop through data
 	for k, document := range data {
