@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ type accountDetails struct {
 	Connections []connection `json:"connections"`
 }
 
-func myEutenlyRoutes(e *echo.Echo) {
+func MyEutenlyRoutes(e *echo.Echo) {
 	e.GET("/api", func(c echo.Context) error {
 		return c.String(http.StatusOK, "MyEutenly API")
 	})

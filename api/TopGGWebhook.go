@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"./database"
+	"../database"
 
 	"github.com/labstack/echo"
 )
@@ -16,7 +16,7 @@ type votehook struct {
 	User string `json:"user"`
 }
 
-func topggWebhook(app *echo.Echo) {
+func TopGGWebhook(app *echo.Echo) {
 
 	app.POST("/api/topgg/votehook", func(c echo.Context) error {
 

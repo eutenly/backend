@@ -1,4 +1,4 @@
-package main
+package authentication
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 )
 
-func twitterAuthenticationRoutes(e *echo.Echo) {
+func TwitterAuthenticationRoutes(e *echo.Echo) {
 	config := oauth1.Config{
 		ConsumerKey:    os.Getenv("TWITTER_KEY"),
 		ConsumerSecret: os.Getenv("TWITTER_SECRET"),

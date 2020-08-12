@@ -1,4 +1,4 @@
-package main
+package authentication
 
 import (
 	"encoding/json"
@@ -24,7 +24,7 @@ type discordUser struct {
 	AvatarID      string `json:"avatar"`
 }
 
-func discordAuthenticationRoutes(e *echo.Echo) {
+func DiscordAuthenticationRoutes(e *echo.Echo) {
 	//Discord Login Route
 	e.GET("/login/discord", func(c echo.Context) error {
 		//Create login URL

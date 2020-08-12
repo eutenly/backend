@@ -19,7 +19,7 @@ func main() {
 	//Load environment variables
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Println("Cannot load .env file. Will use your bash's variables instead.")
 	}
 
 	//Connect to database

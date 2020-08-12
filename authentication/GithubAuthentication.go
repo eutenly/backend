@@ -1,4 +1,4 @@
-package main
+package authentication
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func githubAuthenticationRoutes(e *echo.Echo) {
+func GithubAuthenticationRoutes(e *echo.Echo) {
 	e.GET("/login/github", func(c echo.Context) error {
 		//Check if user logged in
 		sess, _ := session.Get("session", c)
