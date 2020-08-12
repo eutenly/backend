@@ -6,6 +6,11 @@ import (
 
 func parseSet(data map[string]interface{}) {
 
+	//$set already defined
+	if data["$set"] != nil {
+		return
+	}
+
 	//Define $set
 	data["$set"] = map[string]interface{}{}
 	setData := data["$set"].(map[string]interface{})

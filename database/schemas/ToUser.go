@@ -14,6 +14,10 @@ func ToUser(data map[string]interface{}) (user Users, returnErr error) {
 		return
 	}
 
+	//Set old data
+	delete(data, "_id")
+	user.OldData = data
+
 	//Return
 	return user, nil
 
