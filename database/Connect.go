@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"context"
@@ -12,11 +12,13 @@ import (
 )
 
 var (
-	dbClient *mongo.Client
+	db *mongo.Database
 )
 
-func connectDatabase() error {
-	//Create Database client
+//Connect connects to the database using the `MONGO_URI` and `MONGO_DATABASE` env variables
+func Connect() error {
+
+	//Create database client
 	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("MONGO_URI")))
 	if err != nil {
 		return err
@@ -24,14 +26,15 @@ func connectDatabase() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	//Connect to Database
+	//Connect to database
 	err = client.Connect(ctx)
 	if err != nil {
 		return err
 	}
 
-	//Check DB Connection
-	fmt.Println("Checking DB Connection...")
+	//Check database connection
+	fmt.Println("Checking database connection...")
+
 	ctx, cancel = context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	err = client.Ping(ctx, readpref.Primary())
@@ -39,7 +42,11 @@ func connectDatabase() error {
 		return err
 	}
 
-	dbClient = client
+	fmt.Println("Database is connected")
 
+	//Get db
+	db = client.Database(os.Getenv("MONGO_DATABASE"))
+
+	//Return
 	return nil
 }
