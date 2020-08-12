@@ -40,7 +40,7 @@ type Users struct {
 	PatreonTier         int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
 }
 
-//Save saves a user document
+//Save saves a document
 func (user Users) Save() {
 
 	//Get data
@@ -90,4 +90,11 @@ func (user Users) Save() {
 
 	//Run query
 	database.FindOneAndUpdate("users", map[string]interface{}{"_id": user.ID}, updates)
+}
+
+//Delete deletes a document
+func (user Users) Delete() {
+
+	//Run query
+	database.FindOneAndDelete("users", map[string]interface{}{"_id": user.ID})
 }
