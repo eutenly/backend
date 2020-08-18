@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	database "../database"
+
 	twitter "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	twitterAuth "github.com/dghubble/oauth1/twitter"
@@ -75,6 +77,8 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
+
+		database.FindByID(fmt.Sprintf("%v", sess.Values["discord_id"]))
 
 		return c.String(http.StatusAccepted, fmt.Sprintf("UserID: %v; accessToken: %v; accessSecret %v;", authedUser.ID, accessToken, accessSecret))
 	})
