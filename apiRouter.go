@@ -15,6 +15,7 @@ func apiRouter(app *echo.Echo) {
 	authentication.DiscordAuthenticationRoutes(app)
 	authentication.GithubAuthenticationRoutes(app)
 	authentication.TwitterAuthenticationRoutes(app)
+	authentication.SpotifyAuthenticationRoutes(app)
 
 	//top.gg webhook
 	api.TopGGWebhook(app)
