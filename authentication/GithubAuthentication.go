@@ -33,7 +33,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 
 		//If no token was passed then error
 		if authCode == "" {
-			return c.String(http.StatusUnauthorized, "A Discord login error occured.")
+			return c.String(http.StatusUnauthorized, "A login error occured.")
 		}
 
 		//Request accessToken
