@@ -21,11 +21,11 @@ type accountDetails struct {
 }
 
 func MyEutenlyRoutes(e *echo.Echo) {
-	e.GET("/api", func(c echo.Context) error {
+	e.GET("/api/v1", func(c echo.Context) error {
 		return c.String(http.StatusOK, "MyEutenly API")
 	})
 
-	e.GET("/api/me", func(c echo.Context) error {
+	e.GET("/api/v1/me", func(c echo.Context) error {
 		//Get session
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
