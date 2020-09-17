@@ -3,6 +3,7 @@ package authentication
 import (
 	"context"
 	"net/http"
+	"fmt"
 	"os"
 
 	"github.com/labstack/echo"
@@ -40,23 +41,23 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Request accessToken
-		accessToken, err := authenticateSpotify(authCode, oauthConfig)
+		accessToken, refreshToken, err := authenticateSpotify(authCode, oauthConfig)
 		if err != nil {
 			return c.String(http.StatusUnauthorized, "A Spotify login error occured. "+err.Error())
 		}
 
-		return c.String(http.StatusOK, "access token: "+accessToken)
+		return c.String(http.StatusOK, fmt.Sprintf(`Access Token: %v; Refresh Token: %v;`, accessToken, refreshToken))
 	})
 }
 
-func authenticateSpotify(authCode string, conf *oauth2.Config) (accessToken string, returnErr error) {
+func authenticateSpotify(authCode string, conf *oauth2.Config) (accessToken string, refreshToken string, requestError error) {
 
 	ctx := context.Background()
 	tok, err := conf.Exchange(ctx, authCode)
 	if err != nil {
-		returnErr = err
+		requestError = err
 		return
 	}
-	return tok.AccessToken, err
+	return tok.AccessToken, tok.RefreshToken, err
 
 }
