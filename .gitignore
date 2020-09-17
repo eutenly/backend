@@ -3,3 +3,4 @@ backend
 eutenly-backend
 .env
 keys
+static
