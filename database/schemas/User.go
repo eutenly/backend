@@ -24,8 +24,9 @@ type Connection struct {
 
 //SavedLink is the schema for saved link
 type SavedLink struct {
-	URL  string `bson:"url,omitempty" structs:"url,omitempty"`
-	Note string `bson:"note,omitempty" structs:"note,omitempty"`
+	Title       string `bson:"title,omitempty" structs:"title,omitempty"`
+	Description string `bson:"description,omitempty" structs:"description,omitempty"`
+	URL         string `bson:"url,omitempty" structs:"url,omitempty"`
 }
 
 //User is the schema for the users collection
