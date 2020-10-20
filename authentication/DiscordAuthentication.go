@@ -65,7 +65,7 @@ func DiscordAuthenticationRoutes(e *echo.Echo) {
 		sess.Values["discord_username"] = authenticatedUser.Username
 		sess.Values["discord_discrim"] = authenticatedUser.Discriminator
 		sess.Values["discord_id"] = authenticatedUser.ID
-		//sess.Values["discord_avatarurl"] = fmt.Sprintf("https://cdn.discordapp.com/avatars/%v/%v.png?size=256", authenticatedUser.ID, authenticatedUser.AvatarID)
+		sess.Values["discord_avatar"] = authenticatedUser.AvatarID
 
 		//Respond
 		sess.Save(c.Request(), c.Response())
