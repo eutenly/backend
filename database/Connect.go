@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"os"
 	"time"
 
@@ -33,7 +33,7 @@ func Connect() error {
 	}
 
 	//Check database connection
-	fmt.Println("Checking database connection...")
+	logrus.Info("Checking database connection...")
 
 	ctx, cancel = context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -42,7 +42,7 @@ func Connect() error {
 		return err
 	}
 
-	fmt.Println("Database is connected")
+	logrus.Info("Database is connected")
 
 	//Get db
 	db = client.Database(os.Getenv("MONGO_DATABASE"))

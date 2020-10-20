@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"github.com/getsentry/sentry-go"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -29,12 +31,14 @@ func TopGGWebhook(app *echo.Echo) {
 		//Get body
 		body, err := ioutil.ReadAll(c.Request().Body)
 		if err != nil {
+			sentry.CaptureException(err)
 			return c.String(http.StatusBadRequest, "Bad request body")
 		}
 
 		//Parse body
 		var data votehook
 		err = json.Unmarshal(body, &data)
+		logrus.Info(data)
 
 		//Set vote expire timestamp
 		voteExpireTimestamp := (time.Now().UnixNano() / 1000000) + ((12 * time.Hour).Milliseconds())
