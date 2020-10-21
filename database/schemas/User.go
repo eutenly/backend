@@ -6,20 +6,12 @@ import (
 	"github.com/r3labs/diff"
 )
 
-//Token is the schema for tokens
-type Token struct {
-	IV             string `bson:"iv,omitempty" structs:"iv,omitempty"`
-	EphemPublicKey string `bson:"ephemPublicKey,omitempty" structs:"ephemPublicKey,omitempty"`
-	CipherText     string `bson:"cipherText,omitempty" structs:"cipherText,omitempty"`
-	Mac            string `bson:"mac,omitempty" structs:"mac,omitempty"`
-}
-
 //Connection is the schema for service connections
 type Connection struct {
 	ID           string `bson:"id,omitempty" structs:"id,omitempty"`
-	AccessToken  Token  `bson:"accessToken,omitempty" structs:"accessToken,omitempty"`
-	RefreshToken Token  `bson:"refreshToken,omitempty" structs:"refreshToken,omitempty"`
-	AccessSecret Token  `bson:"accessSecret,omitempty" structs:"accessSecret,omitempty"`
+	AccessToken  string `bson:"accessToken,omitempty" structs:"accessToken,omitempty"`
+	RefreshToken string `bson:"refreshToken,omitempty" structs:"refreshToken,omitempty"`
+	AccessSecret string `bson:"accessSecret,omitempty" structs:"accessSecret,omitempty"`
 }
 
 //SavedLink is the schema for saved link
