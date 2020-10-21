@@ -2,8 +2,8 @@ package authentication
 
 import (
 	"context"
-	"net/http"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -45,6 +45,15 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		if err != nil {
 			return c.String(http.StatusUnauthorized, "A Spotify login error occured. "+err.Error())
 		}
+
+		//Get session
+		sess, _ := session.Get("session", c)
+		if sess.Values["authed"] != true {
+			return c.String(http.StatusUnauthorized, "You are not logged in. Please login to Eutenly before continuing.")
+		}
+
+		//Store tokens
+		storeTokens(fmt.Sprintf("%v", sess.Values["discord_id"]), "spotify", "123", map[string]interface{}{"accessToken": accessToken, "refreshToken": refreshToken})
 
 		return c.String(http.StatusOK, fmt.Sprintf(`Access Token: %v; Refresh Token: %v;`, accessToken, refreshToken))
 	})
