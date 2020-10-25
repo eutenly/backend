@@ -12,6 +12,7 @@ type Connection struct {
 	AccessToken  string `bson:"accessToken,omitempty" structs:"accessToken,omitempty"`
 	RefreshToken string `bson:"refreshToken,omitempty" structs:"refreshToken,omitempty"`
 	AccessSecret string `bson:"accessSecret,omitempty" structs:"accessSecret,omitempty"`
+	ConnectedAt  int32  `bson:"connectedAt,omitempty" structs:"connectedAt,omitempty"`
 }
 
 //SavedLink is the schema for saved link
