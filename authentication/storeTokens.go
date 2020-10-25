@@ -5,6 +5,7 @@ import (
 
 	"../database"
 	"../database/schemas"
+	"../influxdb"
 )
 
 func storeTokens(userID string, connectionName string, connectionUserID string, tokens map[string]interface{}) {
@@ -41,4 +42,7 @@ func storeTokens(userID string, connectionName string, connectionUserID string, 
 
 	//Save user
 	userData.Save()
+
+	//Stats
+	influxdb.CollectStat("accounts_authorized", nil, map[string]interface{}{"type": connectionName})
 }
