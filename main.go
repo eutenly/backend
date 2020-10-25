@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/getsentry/sentry-go"
 	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/sirupsen/logrus"
-	"os"
 
 	"./database"
+	"./influxdb"
 
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
@@ -38,6 +40,9 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("Cannot connect to DB: " + err.Error())
 	}
+
+	//Connect to influxdb
+	influxdb.Connect()
 
 	//Create Echo Instance
 	e := echo.New()

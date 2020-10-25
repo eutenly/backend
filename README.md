@@ -31,6 +31,10 @@ To run the app you'll need a .env file in the same directory which the binary ru
 `MONGO_URI=`
 `MONGO_DATABASE=`
 
+`INFLUXDB_URL=http://server.eutenly.com:8086`
+`INFLUXDB_TOKEN=root:PASSWORD`
+`INFLUXDB_BUCKET=dbname/autogen`
+
 ---
 
 `PORT` is which port the app should run on, for example, 8080.
