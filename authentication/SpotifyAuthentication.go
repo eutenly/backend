@@ -53,7 +53,7 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Store tokens
-		storeTokens(fmt.Sprintf("%v", sess.Values["discord_id"]), "spotify", "123", map[string]interface{}{"accessToken": accessToken, "refreshToken": refreshToken})
+		storeTokens(fmt.Sprint(sess.Values["discord_id"]), "spotify", "123", map[string]interface{}{"accessToken": accessToken, "refreshToken": refreshToken})
 
 		return c.String(http.StatusOK, fmt.Sprintf(`Access Token: %v; Refresh Token: %v;`, accessToken, refreshToken))
 	})

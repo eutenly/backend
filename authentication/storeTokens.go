@@ -30,13 +30,13 @@ func storeTokens(userID string, connectionName string, connectionUserID string, 
 	connectionData := userData.Connections[connectionName]
 	connectionData.ID = connectionUserID
 	if tokens["accessToken"] != nil {
-		connectionData.AccessToken = fmt.Sprintf("%v", tokens["accessToken"])
+		connectionData.AccessToken = fmt.Sprint(tokens["accessToken"])
 	}
 	if tokens["refreshToken"] != nil {
-		connectionData.RefreshToken = fmt.Sprintf("%v", tokens["refreshToken"])
+		connectionData.RefreshToken = fmt.Sprint(tokens["refreshToken"])
 	}
 	if tokens["accessSecret"] != nil {
-		connectionData.AccessSecret = fmt.Sprintf("%v", tokens["accessSecret"])
+		connectionData.AccessSecret = fmt.Sprint(tokens["accessSecret"])
 	}
 
 	//Save user
