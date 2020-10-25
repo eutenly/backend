@@ -3,7 +3,6 @@ package authentication
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -33,7 +32,6 @@ func DiscordAuthenticationRoutes(e *echo.Echo) {
 		redirectURI := os.Getenv("WEBSERVER_URL") + "/auth/discord"
 		authURL := fmt.Sprintf("https://discord.com/api/oauth2/authorize?client_id=%v&redirect_uri=%v&response_type=code&scope=identify", clientID, redirectURI)
 
-		logrus.Info(c.QueryParam("redirect_to"))
 		if c.QueryParam("redirect_to") != "" {
 			sess, _ := session.Get("session", c)
 			sess.Values["redirect_to"] = c.QueryParam("redirect_to")
