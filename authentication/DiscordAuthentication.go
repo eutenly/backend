@@ -3,6 +3,7 @@ package authentication
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -31,6 +32,13 @@ func DiscordAuthenticationRoutes(e *echo.Echo) {
 		clientID := os.Getenv("DISCORD_CLIENT_ID")
 		redirectURI := os.Getenv("WEBSERVER_URL") + "/auth/discord"
 		authURL := fmt.Sprintf("https://discord.com/api/oauth2/authorize?client_id=%v&redirect_uri=%v&response_type=code&scope=identify", clientID, redirectURI)
+
+		logrus.Info(c.QueryParam("redirect_to"))
+		if c.QueryParam("redirect_to") != "" {
+			sess, _ := session.Get("session", c)
+			sess.Values["redirect_to"] = c.QueryParam("redirect_to")
+			sess.Save(c.Request(), c.Response())
+		}
 
 		//Send user there
 		return c.Redirect(http.StatusTemporaryRedirect, authURL)
@@ -67,9 +75,16 @@ func DiscordAuthenticationRoutes(e *echo.Echo) {
 		sess.Values["discord_id"] = authenticatedUser.ID
 		sess.Values["discord_avatar"] = authenticatedUser.AvatarID
 
-		//Respond
+		//Save session
 		sess.Save(c.Request(), c.Response())
-		return c.String(http.StatusOK, "Resp: "+accessToken)
+
+		//Redirect
+		if sess.Values["redirect_to"] != nil {
+			return c.Redirect(302, fmt.Sprint(sess.Values["redirect_to"]))
+		}
+
+		//Respond
+		return c.Redirect(302, "/connections")
 	})
 
 	//Logout
