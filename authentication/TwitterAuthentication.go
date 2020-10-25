@@ -60,7 +60,9 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		//Get Twitter Access Tokens
 		accessToken, accessSecret, err := config.AccessToken(requestToken, requestSecret, oauthVerifier)
 		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//Login as user to get Twitter ID
@@ -73,7 +75,9 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 
 		_, _, err = twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
 		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//database.FindByID(fmt.Sprintf("%v", sess.Values["discord_id"]))

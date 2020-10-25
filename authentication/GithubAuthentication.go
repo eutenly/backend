@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -36,13 +37,15 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 
 		//If no token was passed then error
 		if authCode == "" {
-			return c.String(http.StatusUnauthorized, "A login error occured.")
+			return c.String(http.StatusUnauthorized, "No login key was passed.")
 		}
 
 		//Request accessToken
 		_, err := authenticateGitHub(authCode, oauthConfig)
 		if err != nil {
-			return c.String(http.StatusUnauthorized, "A Github login error occured. "+err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "github"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//Set auth cookie

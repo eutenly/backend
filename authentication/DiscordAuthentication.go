@@ -55,13 +55,17 @@ func DiscordAuthenticationRoutes(e *echo.Echo) {
 		//Request accessToken
 		accessToken, err := authenticateDiscord(authCode)
 		if err != nil {
-			return c.String(http.StatusUnauthorized, "A Discord login error occured. "+err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "discord"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//Fetch user details
 		authenticatedUser, err := getDiscordUser(accessToken)
 		if err != nil {
-			return c.String(http.StatusUnauthorized, "A Discord request error occured. "+err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "discord"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 		sess, _ := session.Get("session", c)
 

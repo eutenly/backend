@@ -46,7 +46,9 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		//Request accessToken
 		_, _, err := authenticateReddit(authCode, oauthConfig)
 		if err != nil {
-			return c.String(http.StatusUnauthorized, "A Reddit login error occurred. "+err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "reddit"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//Set auth cookie
