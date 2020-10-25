@@ -71,14 +71,18 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		// Twitter client
 		twitterClient := twitter.NewClient(httpClient)
 
-		authedUser, _, err := twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
+		_, _, err = twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
 
 		//database.FindByID(fmt.Sprintf("%v", sess.Values["discord_id"]))
 
-		return c.String(http.StatusAccepted, fmt.Sprintf("UserID: %v; accessToken: %v; accessSecret %v;", authedUser.ID, accessToken, accessSecret))
+		//Set auth cookie
+		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
+
+		//Redirect
+		return c.Redirect(302, "/connections")
 	})
 
 }

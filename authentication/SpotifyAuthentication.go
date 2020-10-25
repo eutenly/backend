@@ -3,12 +3,11 @@ package authentication
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
 	"golang.org/x/oauth2"
+	"net/http"
+	"os"
 )
 
 func SpotifyAuthenticationRoutes(e *echo.Echo) {
@@ -55,7 +54,11 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		//Store tokens
 		storeTokens(fmt.Sprint(sess.Values["discord_id"]), "spotify", "123", map[string]interface{}{"accessToken": accessToken, "refreshToken": refreshToken})
 
-		return c.String(http.StatusOK, fmt.Sprintf(`Access Token: %v; Refresh Token: %v;`, accessToken, refreshToken))
+		//Set auth cookie
+		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "spotify"})
+
+		//Redirect
+		return c.Redirect(302, "/connections")
 	})
 }
 

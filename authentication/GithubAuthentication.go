@@ -40,12 +40,16 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Request accessToken
-		accessToken, err := authenticateGitHub(authCode, oauthConfig)
+		_, err := authenticateGitHub(authCode, oauthConfig)
 		if err != nil {
 			return c.String(http.StatusUnauthorized, "A Github login error occured. "+err.Error())
 		}
 
-		return c.String(http.StatusOK, "access token: "+accessToken)
+		//Set auth cookie
+		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "github"})
+
+		//Redirect
+		return c.Redirect(302, "/connections")
 	})
 }
 

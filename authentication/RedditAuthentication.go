@@ -44,13 +44,16 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Request accessToken
-		accessToken, refreshToken, err := authenticateReddit(authCode, oauthConfig)
+		_, _, err := authenticateReddit(authCode, oauthConfig)
 		if err != nil {
 			return c.String(http.StatusUnauthorized, "A Reddit login error occurred. "+err.Error())
 		}
 
-		// @APixel - use these vars to do DB shit
-		return c.String(200, fmt.Sprintf("Accces: %v\n Refresh: %v", accessToken, refreshToken))
+		//Set auth cookie
+		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "reddit"})
+
+		//Redirect
+		return c.Redirect(302, "/connections")
 	})
 }
 
