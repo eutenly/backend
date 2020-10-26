@@ -26,6 +26,7 @@ type User struct {
 	ID                  string                 `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
 	OldData             map[string]interface{} `structs:"oldData,omitempty"`
 	Connections         map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
+	CommandsUsed        map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
 	SavedLinks          []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
 	VoteExpireTimestamp int32                  `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
 	PatreonTier         int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
