@@ -29,6 +29,9 @@ type User struct {
 	SavedLinks          []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
 	VoteExpireTimestamp int32                  `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
 	PatreonTier         int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
+	AlphaTester         bool                   `bson:"alphaTester,omitempty" structs:"alphaTester,omitempty"`
+	BetaTester          bool                   `bson:"betaTester,omitempty" structs:"betaTester,omitempty"`
+	BetaServerOwner     bool                   `bson:"betaServerOwner,omitempty" structs:"betaServerOwner,omitempty"`
 }
 
 //Save saves a document
