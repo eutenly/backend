@@ -52,7 +52,7 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "spotify", "123", map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "spotify", "123", "", map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
 		if err != nil {
 			return loginError(err, "spotify", c)
 		}

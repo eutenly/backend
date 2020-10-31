@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func storeTokens(userID string, connectionName string, connectionUserID string, tokens map[string]string) (err error) {
+func storeTokens(userID string, connectionName string, connectionUserID string, connectionUsername string, tokens map[string]string) (err error) {
 	// Get user
 	user, err := database.GetUser(userID)
 	if err != nil {
@@ -20,6 +20,7 @@ func storeTokens(userID string, connectionName string, connectionUserID string, 
 	// Create connection struct
 	connection := schemas.Connection{
 		ID:           connectionUserID,
+		Username:     connectionUsername,
 		AccessToken:  tokens["accessToken"],
 		RefreshToken: tokens["refreshToken"],
 		AccessSecret: tokens["accessSecret"],

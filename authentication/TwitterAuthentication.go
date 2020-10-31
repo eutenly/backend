@@ -86,7 +86,7 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "twitter", fmt.Sprint(twitterUser.ID), map[string]string{"accessToken": accessToken, "accessSecret": accessSecret})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "twitter", fmt.Sprint(twitterUser.ID), fmt.Sprint(twitterUser.ScreenName), map[string]string{"accessToken": accessToken, "accessSecret": accessSecret})
 		if err != nil {
 			return loginError(err, "twitter", c)
 		}

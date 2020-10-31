@@ -55,7 +55,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "github", "123", map[string]string{"accessToken": tokens.AccessToken, "refreshToken": tokens.RefreshToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "github", "123", "", map[string]string{"accessToken": tokens.AccessToken, "refreshToken": tokens.RefreshToken})
 		if err != nil {
 			return loginError(err, "github", c)
 		}

@@ -54,7 +54,7 @@ func myConnections(e *echo.Echo) {
 		for service, connection := range user.Connections {
 			response.Connections[service] = connectionResp{
 				ID:          connection.ID,
-				Username:    "...",
+				Username:    connection.Username,
 				ConnectedAt: connection.ConnectedAt,
 			}
 		}
