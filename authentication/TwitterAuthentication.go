@@ -24,8 +24,8 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		sess, _ := session.Get("session", c)
 
 		//Check if user is authed with Discord
-		if sess.Values["authed"] == false {
-			return c.String(http.StatusInternalServerError, "You need to login.")
+		if sess.Values["authed"] != true {
+			return c.Redirect(302, "/login/discord?redirect_to=/login/twitter")
 		}
 
 		//Make Twitter Auth Request
@@ -73,14 +73,23 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		// Twitter client
 		twitterClient := twitter.NewClient(httpClient)
 
-		_, _, err = twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
+		twitterUser, _, err := twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
 		if err != nil {
 			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
 			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
 			return c.Redirect(302, "/login-error")
 		}
 
-		//database.FindByID(fmt.Sprintf("%v", sess.Values["discord_id"]))
+		//check session
+		if sess.Values["authed"] != true {
+			return c.Redirect(302, "/login/discord?redirect_to=/login/twitter")
+		}
+
+		//Store tokens
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "twitter", fmt.Sprint(twitterUser.ID), map[string]string{"accessToken": accessToken, "accessSecret": accessSecret})
+		if err != nil {
+			return loginError(err, "twitter", c)
+		}
 
 		//Set auth cookie
 		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})

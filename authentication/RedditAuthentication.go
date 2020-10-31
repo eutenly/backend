@@ -25,7 +25,7 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		//Check if user logged in
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
-			return c.String(http.StatusUnauthorized, "You are not logged in. Please login to Eutenly before continuing.")
+			return c.Redirect(302, "/login/discord?redirect_to=/login/reddit")
 		}
 
 		//Construct custom url due to weird params
@@ -44,11 +44,21 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Request accessToken
-		_, _, err := authenticateReddit(authCode, oauthConfig)
+		accessToken, refreshToken, err := authenticateReddit(authCode, oauthConfig)
 		if err != nil {
-			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "reddit"})
-			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
-			return c.Redirect(302, "/login-error")
+			return loginError(err, "reddit", c)
+		}
+
+		//Get session
+		sess, _ := session.Get("session", c)
+		if sess.Values["authed"] != true {
+			return c.Redirect(302, "/login/discord?redirect_to=/login/reddit")
+		}
+
+		//Store tokens
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "reddit", "123", map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
+		if err != nil {
+			return loginError(err, "reddit", c)
 		}
 
 		//Set auth cookie
@@ -69,7 +79,7 @@ func authenticateReddit(authCode string, conf *oauth2.Config) (accessToken strin
 
 	//Set custom UA & Auth because Reddit is annoying
 	request.Header.Add("Authorization", "Basic "+basicAuth(conf.ClientID, conf.ClientSecret))
-	request.Header.Set("User-Agent", "eutenly/0.1")
+	request.Header.Set("User-Agent", "eutenly-backend/0.1")
 
 	//Send request
 	client := &http.Client{}

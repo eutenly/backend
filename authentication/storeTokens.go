@@ -1,48 +1,46 @@
 package authentication
 
 import (
-	"fmt"
-
 	"../database"
 	"../database/schemas"
 	"../influxdb"
+
+	"github.com/sirupsen/logrus"
+	"time"
 )
 
-func storeTokens(userID string, connectionName string, connectionUserID string, tokens map[string]interface{}) {
-
-	//TODO: It doesnt actually modify any values and idk why
-	//TODO: Upsert if user doesnt exist
-
-	//Get user
-	userRaw, _ := database.FindByID("users", userID)
-	userData, _ := schemas.ToUser(userRaw)
-
-	//Define connections
-	if userData.Connections == nil {
-		userData.Connections = map[string]schemas.Connection{}
+func storeTokens(userID string, connectionName string, connectionUserID string, tokens map[string]string) (err error) {
+	// Get user
+	user, err := database.GetUser(userID)
+	if err != nil {
+		logrus.Error(err)
+		return
 	}
 
-	//Define this connection
-	if _, ok := userData.Connections[connectionName]; ok {
-		userData.Connections[connectionName] = schemas.Connection{}
+	// Create connection struct
+	connection := schemas.Connection{
+		ID:           connectionUserID,
+		AccessToken:  tokens["accessToken"],
+		RefreshToken: tokens["refreshToken"],
+		AccessSecret: tokens["accessSecret"],
+		ConnectedAt:  int32(time.Now().UnixNano() / 1e6),
 	}
 
-	//Set connection data
-	connectionData := userData.Connections[connectionName]
-	connectionData.ID = connectionUserID
-	if tokens["accessToken"] != nil {
-		connectionData.AccessToken = fmt.Sprint(tokens["accessToken"])
+	// Insert connection to user
+	if user.Connections == nil {
+		user.Connections = make(map[string]schemas.Connection)
 	}
-	if tokens["refreshToken"] != nil {
-		connectionData.RefreshToken = fmt.Sprint(tokens["refreshToken"])
-	}
-	if tokens["accessSecret"] != nil {
-		connectionData.AccessSecret = fmt.Sprint(tokens["accessSecret"])
-	}
+	user.Connections[connectionName] = connection
 
-	//Save user
-	userData.Save()
+	// Store user
+	err = database.SetUser(user)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
 
 	//Stats
 	influxdb.CollectStat("accounts_authorized", nil, map[string]interface{}{"type": connectionName})
+
+	return
 }

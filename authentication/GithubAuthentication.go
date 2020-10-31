@@ -25,7 +25,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 		//Check if user logged in
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
-			return c.String(http.StatusUnauthorized, "You are not logged in. Please login to Eutenly before continuing.")
+			return c.Redirect(302, "/login/discord?redirect_to=/login/github")
 		}
 
 		//Send user to consent screen
@@ -40,12 +40,24 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 			return c.String(http.StatusUnauthorized, "No login key was passed.")
 		}
 
+		//Get session
+		sess, _ := session.Get("session", c)
+		if sess.Values["authed"] != true {
+			return c.Redirect(302, "/login/discord?redirect_to=/login/github")
+		}
+
 		//Request accessToken
-		_, err := authenticateGitHub(authCode, oauthConfig)
+		tokens, err := authenticateGitHub(authCode, oauthConfig)
 		if err != nil {
 			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "github"})
 			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
 			return c.Redirect(302, "/login-error")
+		}
+
+		//Store tokens
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "github", "123", map[string]string{"accessToken": tokens.AccessToken, "refreshToken": tokens.RefreshToken})
+		if err != nil {
+			return loginError(err, "github", c)
 		}
 
 		//Set auth cookie
@@ -56,7 +68,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 	})
 }
 
-func authenticateGitHub(authCode string, conf *oauth2.Config) (accessToken string, returnErr error) {
+func authenticateGitHub(authCode string, conf *oauth2.Config) (token *oauth2.Token, returnErr error) {
 
 	ctx := context.Background()
 	tok, err := conf.Exchange(ctx, authCode)
@@ -64,6 +76,6 @@ func authenticateGitHub(authCode string, conf *oauth2.Config) (accessToken strin
 		returnErr = err
 		return
 	}
-	return tok.AccessToken, err
+	return tok, err
 
 }
