@@ -9,5 +9,5 @@ import (
 func loginError(err error, service string, c echo.Context) error {
 	c.SetCookie(&http.Cookie{Name: "authed_with", Value: "spotify"})
 	c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
-	return c.Redirect(302, "/login-error")
+	return c.Redirect(302, "/connections")
 }
