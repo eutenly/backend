@@ -22,6 +22,7 @@ func requester(route string, method string, payload interface{}) (err error) {
 		return
 	}
 	request.Header.Set("User-Agent", "eutenly-backend/0.1")
+	request.Header.Set("Authorization", os.Getenv("BOT_ENDPOINT_KEY"))
 
 	//Send request
 	client := &http.Client{}
