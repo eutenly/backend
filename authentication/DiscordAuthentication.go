@@ -1,4 +1,4 @@
-package main
+package authentication
 
 import (
 	"encoding/json"
@@ -24,13 +24,19 @@ type discordUser struct {
 	AvatarID      string `json:"avatar"`
 }
 
-func discordAuthenticationRoutes(e *echo.Echo) {
+func DiscordAuthenticationRoutes(e *echo.Echo) {
 	//Discord Login Route
 	e.GET("/login/discord", func(c echo.Context) error {
 		//Create login URL
 		clientID := os.Getenv("DISCORD_CLIENT_ID")
 		redirectURI := os.Getenv("WEBSERVER_URL") + "/auth/discord"
 		authURL := fmt.Sprintf("https://discord.com/api/oauth2/authorize?client_id=%v&redirect_uri=%v&response_type=code&scope=identify", clientID, redirectURI)
+
+		if c.QueryParam("redirect_to") != "" {
+			sess, _ := session.Get("session", c)
+			sess.Values["redirect_to"] = c.QueryParam("redirect_to")
+			sess.Save(c.Request(), c.Response())
+		}
 
 		//Send user there
 		return c.Redirect(http.StatusTemporaryRedirect, authURL)
@@ -49,13 +55,17 @@ func discordAuthenticationRoutes(e *echo.Echo) {
 		//Request accessToken
 		accessToken, err := authenticateDiscord(authCode)
 		if err != nil {
-			return c.String(http.StatusUnauthorized, "A Discord login error occured. "+err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "discord"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//Fetch user details
 		authenticatedUser, err := getDiscordUser(accessToken)
 		if err != nil {
-			return c.String(http.StatusUnauthorized, "A Discord request error occured. "+err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "discord"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 		sess, _ := session.Get("session", c)
 
@@ -65,11 +75,18 @@ func discordAuthenticationRoutes(e *echo.Echo) {
 		sess.Values["discord_username"] = authenticatedUser.Username
 		sess.Values["discord_discrim"] = authenticatedUser.Discriminator
 		sess.Values["discord_id"] = authenticatedUser.ID
-		//sess.Values["discord_avatarurl"] = fmt.Sprintf("https://cdn.discordapp.com/avatars/%v/%v.png?size=256", authenticatedUser.ID, authenticatedUser.AvatarID)
+		sess.Values["discord_avatar"] = authenticatedUser.AvatarID
+
+		//Save session
+		sess.Save(c.Request(), c.Response())
+
+		//Redirect
+		if sess.Values["redirect_to"] != nil {
+			return c.Redirect(302, fmt.Sprint(sess.Values["redirect_to"]))
+		}
 
 		//Respond
-		sess.Save(c.Request(), c.Response())
-		return c.String(http.StatusOK, "Resp: "+accessToken)
+		return c.Redirect(302, "/connections")
 	})
 
 	//Logout

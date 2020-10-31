@@ -5,5 +5,5 @@ import (
 )
 
 func staticRouter(e *echo.Echo) {
-	e.Static("/", "static");
+	e.Static("/", "static")
 }

@@ -1,18 +1,23 @@
 package main
 
 import (
+	"./api"
+	"./authentication"
+
 	"github.com/labstack/echo"
 )
 
 func apiRouter(app *echo.Echo) {
 	//myEutenly Routes
-	myEutenlyRoutes(app)
+	api.MyEutenlyRoutes(app)
 
 	//Authentication Routes
-	discordAuthenticationRoutes(app)
-	githubAuthenticationRoutes(app)
-	twitterAuthenticationRoutes(app)
+	authentication.DiscordAuthenticationRoutes(app)
+	authentication.GithubAuthenticationRoutes(app)
+	authentication.TwitterAuthenticationRoutes(app)
+	authentication.SpotifyAuthenticationRoutes(app)
+	authentication.RedditAuthenticationRoutes(app)
 
 	//top.gg webhook
-	topggWebhook(app)
+	api.TopGGWebhook(app)
 }

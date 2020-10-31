@@ -1,4 +1,4 @@
-package main
+package authentication
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 )
 
-func twitterAuthenticationRoutes(e *echo.Echo) {
+func TwitterAuthenticationRoutes(e *echo.Echo) {
 	config := oauth1.Config{
 		ConsumerKey:    os.Getenv("TWITTER_KEY"),
 		ConsumerSecret: os.Getenv("TWITTER_SECRET"),
@@ -24,8 +24,8 @@ func twitterAuthenticationRoutes(e *echo.Echo) {
 		sess, _ := session.Get("session", c)
 
 		//Check if user is authed with Discord
-		if sess.Values["authed"] == false {
-			return c.String(http.StatusInternalServerError, "You need to login.")
+		if sess.Values["authed"] != true {
+			return c.Redirect(302, "/login/discord?redirect_to=/login/twitter")
 		}
 
 		//Make Twitter Auth Request
@@ -60,7 +60,9 @@ func twitterAuthenticationRoutes(e *echo.Echo) {
 		//Get Twitter Access Tokens
 		accessToken, accessSecret, err := config.AccessToken(requestToken, requestSecret, oauthVerifier)
 		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
 		//Login as user to get Twitter ID
@@ -71,12 +73,29 @@ func twitterAuthenticationRoutes(e *echo.Echo) {
 		// Twitter client
 		twitterClient := twitter.NewClient(httpClient)
 
-		authedUser, _, err := twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
+		twitterUser, _, err := twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
 		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
+			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
+			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
+			return c.Redirect(302, "/login-error")
 		}
 
-		return c.String(http.StatusAccepted, fmt.Sprintf("UserID: %v; accessToken: %v; accessSecret %v;", authedUser.ID, accessToken, accessSecret))
+		//check session
+		if sess.Values["authed"] != true {
+			return c.Redirect(302, "/login/discord?redirect_to=/login/twitter")
+		}
+
+		//Store tokens
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "twitter", fmt.Sprint(twitterUser.ID), fmt.Sprint(twitterUser.ScreenName), map[string]string{"accessToken": accessToken, "accessSecret": accessSecret})
+		if err != nil {
+			return loginError(err, "twitter", c)
+		}
+
+		//Set auth cookie
+		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "twitter"})
+
+		//Redirect
+		return c.Redirect(302, "/connections")
 	})
 
 }
