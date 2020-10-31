@@ -12,4 +12,5 @@ func MyEutenlyRoutes(e *echo.Echo) {
 	})
 	myConnections(e)
 	deleteConnection(e)
+	geolaRoutes(e)
 }
