@@ -38,9 +38,18 @@ func TopGGWebhook(app *echo.Echo) {
 		var data votehook
 		err = json.Unmarshal(body, &data)
 
-		//Set vote expire timestamp
-		voteExpireTimestamp := (time.Now().UnixNano() / 1000000) + ((12 * time.Hour).Milliseconds())
-		database.FindOneAndUpdate("users", map[string]interface{}{"_id": data.User}, map[string]interface{}{"voteExpireTimestamp": voteExpireTimestamp}, true)
+		//Store vote
+		user, err := database.GetUser(data.User)
+		if err != nil {
+			sentry.CaptureException(err)
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		user.VoteExpireTimestamp = int32((time.Now().UnixNano() / 1000000) + ((12 * time.Hour).Milliseconds()))
+		err = database.SetUser(user)
+		if err != nil {
+			sentry.CaptureException(err)
+			return c.NoContent(http.StatusInternalServerError)
+		}
 
 		//Return
 		return c.String(http.StatusOK, "OK")

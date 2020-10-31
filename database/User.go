@@ -48,3 +48,20 @@ func SetUser(user schemas.User) (err error) {
 	// Return
 	return
 }
+
+func UnsetUserConnection(UserID string) (err error) {
+	// Create filter
+	match := bson.M{"_id": UserID}
+
+	// Store user
+	_, err = db.Collection("users").UpdateOne(context.TODO(), match, bson.M{"$unset": bson.M{"connections": ""}}, options.Update().SetUpsert(true))
+
+	// Check for errors
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	// Return
+	return
+}
