@@ -1,11 +1,5 @@
 package schemas
 
-import (
-	database ".."
-	"github.com/fatih/structs"
-	"github.com/r3labs/diff"
-)
-
 //Connection is the schema for service connections
 type Connection struct {
 	ID           string `bson:"id,omitempty" structs:"id,omitempty"`
@@ -23,7 +17,7 @@ type SavedLink struct {
 
 //User is the schema for the users collection
 type User struct {
-	ID                  string                 `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
+	ID                  *string                `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
 	OldData             map[string]interface{} `structs:"oldData,omitempty"`
 	Connections         map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
 	CommandsUsed        map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
@@ -35,29 +29,29 @@ type User struct {
 	BetaServerOwner     bool                   `bson:"betaServerOwner,omitempty" structs:"betaServerOwner,omitempty"`
 }
 
-//Save saves a document
-func (user User) Save() {
-
-	//Get data
-	data := structs.Map(user)
-
-	//Remove `_id` and `oldData`
-	delete(data, "_id")
-	delete(data, "oldData")
-
-	//Get changes
-	changes, _ := diff.Diff(user.OldData, data)
-
-	//Get updates
-	updates := getUpdates(changes)
-
-	//Run query
-	database.FindOneAndUpdate("users", map[string]interface{}{"_id": user.ID}, updates)
-}
-
-//Delete deletes a document
-func (user User) Delete() {
-
-	//Run query
-	database.FindOneAndDelete("users", map[string]interface{}{"_id": user.ID})
-}
+////Save saves a document
+//func (user User) Save() {
+//
+//	//Get data
+//	data := structs.Map(user)
+//
+//	//Remove `_id` and `oldData`
+//	delete(data, "_id")
+//	delete(data, "oldData")
+//
+//	//Get changes
+//	changes, _ := diff.Diff(user.OldData, data)
+//
+//	//Get updates
+//	updates := getUpdates(changes)
+//
+//	//Run query
+//	database.FindOneAndUpdate("users", map[string]interface{}{"_id": user.ID}, updates)
+//}
+//
+////Delete deletes a document
+//func (user User) Delete() {
+//
+//	//Run query
+//	database.FindOneAndDelete("users", map[string]interface{}{"_id": user.ID})
+//}

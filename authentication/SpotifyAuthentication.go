@@ -24,7 +24,7 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		//Check if user logged in
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
-			return c.String(http.StatusUnauthorized, "You are not logged in. Please login to Eutenly before continuing.")
+			return c.Redirect(302, "/login/discord?redirect_to=/login/spotify")
 		}
 
 		//Send user to consent screen
@@ -42,19 +42,20 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		//Request accessToken
 		accessToken, refreshToken, err := authenticateSpotify(authCode, oauthConfig)
 		if err != nil {
-			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "spotify"})
-			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
-			return c.Redirect(302, "/login-error")
+			return loginError(err, "spotify", c)
 		}
 
 		//Get session
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
-			return c.String(http.StatusUnauthorized, "You are not logged in. Please login to Eutenly before continuing.")
+			return c.Redirect(302, "/login/discord?redirect_to=/login/spotify")
 		}
 
 		//Store tokens
-		storeTokens(fmt.Sprint(sess.Values["discord_id"]), "spotify", "123", map[string]interface{}{"accessToken": accessToken, "refreshToken": refreshToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "spotify", "123", map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
+		if err != nil {
+			return loginError(err, "spotify", c)
+		}
 
 		//Set auth cookie
 		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "spotify"})
