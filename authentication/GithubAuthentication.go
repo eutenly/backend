@@ -1,8 +1,12 @@
 package authentication
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -52,10 +56,18 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "github"})
 			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
 			return c.Redirect(302, "/login-error")
+
+		}
+
+		//Get username
+		username, id, err := loginGitHub(tokens.AccessToken)
+		if err != nil {
+			logrus.Error("github login:", err)
+			username = "?"
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "github", "123", "", map[string]string{"accessToken": tokens.AccessToken, "refreshToken": tokens.RefreshToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "github", id, username, map[string]string{"accessToken": tokens.AccessToken, "refreshToken": tokens.RefreshToken})
 		if err != nil {
 			return loginError(err, "github", c)
 		}
@@ -78,4 +90,52 @@ func authenticateGitHub(authCode string, conf *oauth2.Config) (token *oauth2.Tok
 	}
 	return tok, err
 
+}
+
+func loginGitHub(accessToken string) (username string, id string, err error) {
+	//Construct body of request
+	request, err := http.NewRequest("GET", "https://api.github.com/user", bytes.NewBuffer([]byte("")))
+	if err != nil {
+		return
+	}
+
+	//Set auth headers
+	request.Header.Add("Authorization", "token "+accessToken)
+	request.Header.Set("User-Agent", "eutenly-backend/0.1")
+
+	//Send request
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	//Check status
+	if response.StatusCode != 200 {
+		err = fmt.Errorf("bad status code ", response.StatusCode)
+		return
+	}
+
+	//Format JSON from response body
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+	var responseJSON githubLoginResponse
+	err = json.Unmarshal(body, &responseJSON)
+	if err != nil {
+		return
+	}
+
+	//Parse response
+	id = fmt.Sprint(responseJSON.ID)
+	username = fmt.Sprint(responseJSON.Username)
+
+	return
+}
+
+type githubLoginResponse struct {
+	ID       int    `json:"id"`
+	Username string `json:"login"`
 }

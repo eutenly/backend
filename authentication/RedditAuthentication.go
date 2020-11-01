@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -43,20 +44,27 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 			return c.String(http.StatusUnauthorized, "A login error occurred.")
 		}
 
-		//Request accessToken
-		accessToken, refreshToken, err := authenticateReddit(authCode, oauthConfig)
-		if err != nil {
-			return loginError(err, "reddit", c)
-		}
-
 		//Get session
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
 			return c.Redirect(302, "/login/discord?redirect_to=/login/reddit")
 		}
 
+		//Request accessToken
+		accessToken, refreshToken, err := authenticateReddit(authCode, oauthConfig)
+		if err != nil {
+			return loginError(err, "reddit", c)
+		}
+
+		//Request username
+		username, err := loginReddit(accessToken)
+		if err != nil {
+			logrus.Error("reddit login:", err)
+			username = "?"
+		}
+
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "reddit", "123", "", map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "reddit", username, username, map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
 		if err != nil {
 			return loginError(err, "reddit", c)
 		}
@@ -114,4 +122,55 @@ func authenticateReddit(authCode string, conf *oauth2.Config) (accessToken strin
 func basicAuth(username, password string) string {
 	auth := username + ":" + password
 	return base64.StdEncoding.EncodeToString([]byte(auth))
+}
+
+func loginReddit(accessToken string) (username string, err error) {
+	//Construct body of request
+	request, err := http.NewRequest("GET", "https://oauth.reddit.com/api/v1/me", bytes.NewBuffer([]byte("")))
+	if err != nil {
+		return
+	}
+
+	//Set custom UA & Auth because Reddit is annoying
+	request.Header.Add("Authorization", "Bearer "+accessToken)
+	request.Header.Set("User-Agent", "eutenly-backend/0.1")
+
+	//Send request
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	//Check status
+	if response.StatusCode != 200 {
+		err = fmt.Errorf("bad status code ", response.StatusCode)
+		return
+	}
+
+	//Format JSON from response body
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+	responseJSON := make(map[string]interface{})
+	err = json.Unmarshal(body, &responseJSON)
+	if err != nil {
+		return
+	}
+
+	//Detect errors within response
+	if responseJSON["error"] != nil {
+		err = fmt.Errorf("reddit: %v", responseJSON["error"])
+		return
+	}
+	if responseJSON["name"] == nil {
+		err = fmt.Errorf("bad response")
+		return
+	}
+
+	username = fmt.Sprint(responseJSON["name"])
+
+	return
 }
