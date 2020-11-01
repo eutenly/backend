@@ -7,7 +7,7 @@ type Connection struct {
 	RefreshToken string `bson:"refreshToken,omitempty" structs:"refreshToken,omitempty"`
 	AccessSecret string `bson:"accessSecret,omitempty" structs:"accessSecret,omitempty"`
 	Username     string `bson:"username,omitempty" structs:"username,omitempty"`
-	ConnectedAt  int32  `bson:"connectedAt,omitempty" structs:"connectedAt,omitempty"`
+	ConnectedAt  int    `bson:"connectedAt,omitempty" structs:"connectedAt,omitempty"`
 }
 
 //SavedLink is the schema for saved link
@@ -24,7 +24,7 @@ type User struct {
 	Connections         map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
 	CommandsUsed        map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
 	SavedLinks          []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
-	VoteExpireTimestamp int32                  `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
+	VoteExpireTimestamp int                    `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
 	PatreonTier         int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
 	AlphaTester         bool                   `bson:"alphaTester,omitempty" structs:"alphaTester,omitempty"`
 	BetaTester          bool                   `bson:"betaTester,omitempty" structs:"betaTester,omitempty"`

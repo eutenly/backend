@@ -1,9 +1,8 @@
 package api
 
 import (
-	"encoding/json"
 	"github.com/getsentry/sentry-go"
-	"io/ioutil"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"time"
@@ -19,7 +18,7 @@ type votehook struct {
 
 func TopGGWebhook(app *echo.Echo) {
 
-	app.POST("/api/topgg/votehook", func(c echo.Context) error {
+	app.POST("/api/v1/vote", func(c echo.Context) error {
 
 		//Validate request
 		webhookSecret := c.Request().Header.Get("Authorization")
@@ -28,23 +27,20 @@ func TopGGWebhook(app *echo.Echo) {
 		}
 
 		//Get body
-		body, err := ioutil.ReadAll(c.Request().Body)
+		var body votehook
+		err := c.Bind(&body)
 		if err != nil {
-			sentry.CaptureException(err)
-			return c.String(http.StatusBadRequest, "Bad request body")
+			logrus.Error(err)
+			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		//Parse body
-		var data votehook
-		err = json.Unmarshal(body, &data)
-
 		//Store vote
-		user, err := database.GetUser(data.User)
+		user, err := database.GetUser(body.User)
 		if err != nil {
 			sentry.CaptureException(err)
 			return c.NoContent(http.StatusInternalServerError)
 		}
-		user.VoteExpireTimestamp = int32((time.Now().UnixNano() / 1000000) + ((12 * time.Hour).Milliseconds()))
+		user.VoteExpireTimestamp = int(time.Now().Add(time.Hour*12).UnixNano() / int64(time.Millisecond))
 		err = database.SetUser(user)
 		if err != nil {
 			sentry.CaptureException(err)

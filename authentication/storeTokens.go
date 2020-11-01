@@ -24,7 +24,7 @@ func storeTokens(userID string, connectionName string, connectionUserID string, 
 		AccessToken:  tokens["accessToken"],
 		RefreshToken: tokens["refreshToken"],
 		AccessSecret: tokens["accessSecret"],
-		ConnectedAt:  int32(time.Now().UnixNano() / 1e6),
+		ConnectedAt:  int(time.Now().UnixNano() / int64(time.Millisecond)),
 	}
 
 	// Insert connection to user

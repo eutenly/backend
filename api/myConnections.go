@@ -15,7 +15,7 @@ import (
 type connectionResp struct {
 	ID          string `json:"id"`
 	Username    string `json:"username"`
-	ConnectedAt int32  `json:"connectedAt"`
+	ConnectedAt int    `json:"connectedAt"`
 }
 
 type accountDetailsResp struct {
