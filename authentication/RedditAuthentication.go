@@ -57,14 +57,14 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Request username
-		username, err := loginReddit(accessToken)
+		username, id, err := loginReddit(accessToken)
 		if err != nil {
 			logrus.Error("reddit login:", err)
 			username = "?"
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "reddit", username, username, map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "reddit", id, username, map[string]string{"accessToken": accessToken, "refreshToken": refreshToken})
 		if err != nil {
 			return loginError(err, "reddit", c)
 		}
@@ -124,7 +124,7 @@ func basicAuth(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-func loginReddit(accessToken string) (username string, err error) {
+func loginReddit(accessToken string) (username string, id string, err error) {
 	//Construct body of request
 	request, err := http.NewRequest("GET", "https://oauth.reddit.com/api/v1/me", bytes.NewBuffer([]byte("")))
 	if err != nil {
@@ -169,8 +169,13 @@ func loginReddit(accessToken string) (username string, err error) {
 		err = fmt.Errorf("bad response")
 		return
 	}
+	if responseJSON["id"] == nil {
+		err = fmt.Errorf("bad response")
+		return
+	}
 
 	username = fmt.Sprint(responseJSON["name"])
+	id = fmt.Sprint(responseJSON["id"])
 
 	return
 }
