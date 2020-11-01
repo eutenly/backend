@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/getsentry/sentry-go"
 	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/sirupsen/logrus"
+	"os"
 
 	"./database"
 	"./influxdb"
