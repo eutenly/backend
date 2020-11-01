@@ -2,13 +2,14 @@ package api
 
 import (
 	"../influxdb"
+	"fmt"
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 	"os"
 )
 
 type geolaRequest struct {
-	MemberCount string `json:"memberCount"`
+	MemberCount int `json:"memberCount"`
 }
 
 func geolaRoutes(app *echo.Echo) {
@@ -25,7 +26,7 @@ func geolaRoutes(app *echo.Echo) {
 			return c.String(500, err.Error())
 		}
 
-		influxdb.CollectStat("eutenland_join_leave", map[string]string{"type": "join"}, map[string]interface{}{"totalMembers": body.MemberCount})
+		influxdb.CollectStat("eutenland_join_leave", map[string]string{"type": "join"}, map[string]interface{}{"totalMembers": fmt.Sprint(body.MemberCount)})
 		return c.NoContent(200)
 	})
 	app.POST("/api/v1/geola/leave", func(c echo.Context) error {
@@ -41,7 +42,7 @@ func geolaRoutes(app *echo.Echo) {
 			return c.String(500, err.Error())
 		}
 
-		influxdb.CollectStat("eutenland_join_leave", map[string]string{"type": "leave"}, map[string]interface{}{"totalMembers": body.MemberCount})
+		influxdb.CollectStat("eutenland_join_leave", map[string]string{"type": "leave"}, map[string]interface{}{"totalMembers": fmt.Sprint(body.MemberCount)})
 		return c.NoContent(200)
 	})
 }
