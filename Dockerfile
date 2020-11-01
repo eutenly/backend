@@ -16,6 +16,7 @@ EXPOSE 8081
 
 # Copy binary files
 COPY eutenly.linux ./main
+COPY ./static ./static
 
 # Command to run the executable
 CMD ["./main"]
