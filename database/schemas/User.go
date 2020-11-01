@@ -20,7 +20,7 @@ type SavedLink struct {
 //User is the schema for the users collection
 type User struct {
 	ID                  *string                `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
-	OldData             map[string]interface{} `structs:"oldData,omitempty"`
+	OldData             map[string]interface{} `bson:"-" structs:"oldData,omitempty"`
 	Connections         map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
 	CommandsUsed        map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
 	SavedLinks          []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
