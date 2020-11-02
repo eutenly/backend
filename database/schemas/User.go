@@ -29,6 +29,8 @@ type User struct {
 	AlphaTester         bool                   `bson:"alphaTester,omitempty" structs:"alphaTester,omitempty"`
 	BetaTester          bool                   `bson:"betaTester,omitempty" structs:"betaTester,omitempty"`
 	BetaServerOwner     bool                   `bson:"betaServerOwner,omitempty" structs:"betaServerOwner,omitempty"`
+	Suggester           bool                   `bson:"suggester,omitempty" structs:"suggester,omitempty"`
+	BugHunter           bool                   `bson:"bugHunter,omitempty" structs:"bugHunter,omitempty"`
 }
 
 ////Save saves a document
