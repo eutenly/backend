@@ -5,13 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
-	"io/ioutil"
-	"net/http"
-	"os"
 )
 
 func SpotifyAuthenticationRoutes(e *echo.Echo) {
@@ -19,7 +20,7 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		ClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 		ClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 		RedirectURL:  os.Getenv("WEBSERVER_URL") + "/auth/spotify",
-		Scopes:       []string{"user-read-playback-state user-modify-playback-state user-read-recently-played user-library-modify playlist-modify-private playlist-modify-public user-top-read"},
+		Scopes:       []string{"user-read-private user-read-playback-state user-modify-playback-state user-read-recently-played user-library-modify playlist-modify-private playlist-modify-public user-top-read"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://accounts.spotify.com/authorize",
 			TokenURL: "https://accounts.spotify.com/api/token",
