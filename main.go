@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/getsentry/sentry-go"
 	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/sirupsen/logrus"
-	"os"
 
 	"./database"
 	"./influxdb"
@@ -55,7 +56,7 @@ func main() {
 	apiRouter(e)
 
 	//Setup static router
-	staticRouter(e)
+	// staticRouter(e)
 
 	//Enable Sessions
 	sessionManager := session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET"))))

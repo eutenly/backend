@@ -1,9 +1,9 @@
 # Build & Copy frontend
-echo "Building frontend..."
-yarn --cwd ../eutenly-website/ build
-rm -rf static/
-cp -r ../eutenly-website/public .
-mv ./public ./static
+# echo "Building frontend..."
+# yarn --cwd ../eutenly-website/ build
+# rm -rf static/
+# cp -r ../eutenly-website/public .
+# mv ./public ./static
 
 # Build binary for linux
 echo "Building backend..."
