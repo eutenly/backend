@@ -19,18 +19,19 @@ type SavedLink struct {
 
 //User is the schema for the users collection
 type User struct {
-	ID                  *string                `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
-	OldData             map[string]interface{} `bson:"-" structs:"oldData,omitempty"`
-	Connections         map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
-	CommandsUsed        map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
-	SavedLinks          []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
-	VoteExpireTimestamp int                    `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
-	PatreonTier         int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
-	AlphaTester         bool                   `bson:"alphaTester,omitempty" structs:"alphaTester,omitempty"`
-	BetaTester          bool                   `bson:"betaTester,omitempty" structs:"betaTester,omitempty"`
-	BetaServerOwner     bool                   `bson:"betaServerOwner,omitempty" structs:"betaServerOwner,omitempty"`
-	Suggester           bool                   `bson:"suggester,omitempty" structs:"suggester,omitempty"`
-	BugHunter           bool                   `bson:"bugHunter,omitempty" structs:"bugHunter,omitempty"`
+	ID                            *string                `bson:"_id,omitempty" mapstructure:"_id" structs:"_id,omitempty"`
+	OldData                       map[string]interface{} `bson:"-" structs:"oldData,omitempty"`
+	Connections                   map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
+	CommandsUsed                  map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
+	SavedLinks                    []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
+	ReactionConfirmationsDisabled bool                   `bson:"reactionConfirmationsDisabled,omitempty" structs:"reactionConfirmationsDisabled,omitempty"`
+	VoteExpireTimestamp           int                    `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
+	PatreonTier                   int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
+	AlphaTester                   bool                   `bson:"alphaTester,omitempty" structs:"alphaTester,omitempty"`
+	BetaTester                    bool                   `bson:"betaTester,omitempty" structs:"betaTester,omitempty"`
+	BetaServerOwner               bool                   `bson:"betaServerOwner,omitempty" structs:"betaServerOwner,omitempty"`
+	Suggester                     bool                   `bson:"suggester,omitempty" structs:"suggester,omitempty"`
+	BugHunter                     bool                   `bson:"bugHunter,omitempty" structs:"bugHunter,omitempty"`
 }
 
 ////Save saves a document
