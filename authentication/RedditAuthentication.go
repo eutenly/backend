@@ -5,11 +5,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/labstack/echo-contrib/session"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/labstack/echo-contrib/session"
+	"github.com/sirupsen/logrus"
 
 	"github.com/labstack/echo"
 	"golang.org/x/oauth2"
@@ -30,7 +31,7 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Construct custom url due to weird params
-		authUrl := fmt.Sprintf("https://reddit.com/api/v1/authorize?client_id=%v&response_type=code&redirect_uri=%v&state=eutenly&duration=permanent&scope=identity,read,vote,save,history", oauthConfig.ClientID, oauthConfig.RedirectURL)
+		authUrl := fmt.Sprintf("https://reddit.com/api/v1/authorize?client_id=%v&response_type=code&redirect_uri=%v&state=eutenly&duration=permanent&scope=identity,read,vote,save,history,subscribe", oauthConfig.ClientID, oauthConfig.RedirectURL)
 
 		//Send user to consent screen
 		return c.Redirect(http.StatusTemporaryRedirect, authUrl)
