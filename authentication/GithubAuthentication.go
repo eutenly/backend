@@ -20,7 +20,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 	oauthConfig := &oauth2.Config{
 		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
 		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-		Scopes:       []string{"repo", "notifications"},
+		Scopes:       []string{"repo", "notifications", "user:follow"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://github.com/login/oauth/authorize",
 			TokenURL: "https://github.com/login/oauth/access_token",
