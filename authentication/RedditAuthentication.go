@@ -30,7 +30,7 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Construct custom url due to weird params
-		authUrl := fmt.Sprintf("https://reddit.com/api/v1/authorize?client_id=%v&response_type=code&redirect_uri=%v&state=eutenly&duration=permanent&scope=identity,read,vote,save,history", oauthConfig.ClientID, oauthConfig.RedirectURL)
+		authUrl := fmt.Sprintf("https://reddit.com/api/v1/authorize?client_id=%v&response_type=code&redirect_uri=%v&state=eutenly&duration=permanent&scope=identity,read,vote,save,history,subscribe", oauthConfig.ClientID, oauthConfig.RedirectURL)
 
 		//Send user to consent screen
 		return c.Redirect(http.StatusTemporaryRedirect, authUrl)

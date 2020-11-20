@@ -20,7 +20,7 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		ClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 		ClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 		RedirectURL:  os.Getenv("WEBSERVER_URL") + "/auth/spotify",
-		Scopes:       []string{"user-read-private user-read-playback-state user-modify-playback-state user-read-recently-played user-library-modify playlist-modify-private playlist-modify-public user-top-read"},
+		Scopes:       []string{"user-read-private user-read-playback-state user-modify-playback-state user-read-recently-played user-library-modify playlist-modify-private playlist-modify-public user-top-read user-follow-modify"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://accounts.spotify.com/authorize",
 			TokenURL: "https://accounts.spotify.com/api/token",
