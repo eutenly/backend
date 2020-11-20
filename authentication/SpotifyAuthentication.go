@@ -41,9 +41,8 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 
 		//If no token was passed then error
 		if authCode == "" {
-			return c.String(http.StatusUnauthorized, "No key was passed.")
+			return loginError(fmt.Errorf("no auth code"), "spotify", c)
 		}
-
 		//Request accessToken
 		accessToken, refreshToken, err := authenticateSpotify(authCode, oauthConfig)
 		if err != nil {
@@ -70,7 +69,7 @@ func SpotifyAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Set auth cookie
-		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "spotify"})
+		authCookie("spotify", c)
 
 		//Redirect
 		return c.Redirect(302, "/connections")

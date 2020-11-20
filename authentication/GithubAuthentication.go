@@ -5,11 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
-
-	"github.com/sirupsen/logrus"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
@@ -20,7 +19,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 	oauthConfig := &oauth2.Config{
 		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
 		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-		Scopes:       []string{"repo", "notifications"},
+		Scopes:       []string{"public_repo", "notifications"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://github.com/login/oauth/authorize",
 			TokenURL: "https://github.com/login/oauth/access_token",
@@ -42,7 +41,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 
 		//If no token was passed then error
 		if authCode == "" {
-			return c.String(http.StatusUnauthorized, "No login key was passed.")
+			return loginError(fmt.Errorf("no auth code"), "github", c)
 		}
 
 		//Get session
@@ -54,10 +53,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 		//Request accessToken
 		tokens, err := authenticateGitHub(authCode, oauthConfig)
 		if err != nil {
-			c.SetCookie(&http.Cookie{Name: "authed_with", Value: "github"})
-			c.SetCookie(&http.Cookie{Name: "auth_error", Value: fmt.Sprint(err.Error())})
-			return c.Redirect(302, "/login-error")
-
+			return loginError(err, "github", c)
 		}
 
 		//Get username
@@ -74,7 +70,7 @@ func GithubAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Set auth cookie
-		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "github"})
+		authCookie("github", c)
 
 		//Redirect
 		return c.Redirect(302, "/connections")
