@@ -5,12 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/labstack/echo-contrib/session"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
-
-	"github.com/labstack/echo-contrib/session"
-	"github.com/sirupsen/logrus"
 
 	"github.com/labstack/echo"
 	"golang.org/x/oauth2"
@@ -42,7 +41,7 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 
 		//If no token was passed then error
 		if authCode == "" {
-			return c.String(http.StatusUnauthorized, "A login error occurred.")
+			return loginError(fmt.Errorf("no auth code"), "reddit", c)
 		}
 
 		//Get session
@@ -71,7 +70,7 @@ func RedditAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Set auth cookie
-		c.SetCookie(&http.Cookie{Name: "authed_with", Value: "reddit"})
+		authCookie("reddit", c)
 
 		//Redirect
 		return c.Redirect(302, "/connections")
