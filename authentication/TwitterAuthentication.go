@@ -72,7 +72,7 @@ func TwitterAuthenticationRoutes(e *echo.Echo) {
 		twitterClient := twitter.NewClient(httpClient)
 
 		twitterUser, _, err := twitterClient.Accounts.VerifyCredentials(&twitter.AccountVerifyParams{})
-		if err == nil {
+		if err != nil {
 			return loginError(err, "twitter", c)
 		}
 
