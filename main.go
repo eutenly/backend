@@ -56,7 +56,7 @@ func main() {
 	apiRouter(e)
 
 	//Setup static router
-	// staticRouter(e)
+	//staticRouter(e)
 
 	//Enable Sessions
 	sessionManager := session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET"))))
