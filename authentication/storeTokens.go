@@ -1,9 +1,8 @@
 package authentication
 
 import (
-	"../database"
-	"../database/schemas"
-	"../influxdb"
+	"eutenly/backend/database"
+	"eutenly/backend/database/schemas"
 
 	"github.com/sirupsen/logrus"
 	"time"
@@ -41,7 +40,7 @@ func storeTokens(userID string, connectionName string, connectionUserID string, 
 	}
 
 	//Stats
-	influxdb.CollectStat("accounts_authorized", nil, map[string]interface{}{"type": connectionName})
+	//influxdb.CollectStat("accounts_authorized", nil, map[string]interface{}{"type": connectionName})
 
 	return
 }

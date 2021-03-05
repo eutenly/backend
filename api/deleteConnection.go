@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"os"
 
-	"../database"
-	"../database/schemas"
+	"eutenly/backend/database"
+	"eutenly/backend/database/schemas"
 
-	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 )
 
 func deleteConnection(e *echo.Echo) {

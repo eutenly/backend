@@ -1,10 +1,10 @@
 package main
 
 import (
-	"./api"
-	"./authentication"
+	"eutenly/backend/api"
+	"eutenly/backend/authentication"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 func apiRouter(app *echo.Echo) {

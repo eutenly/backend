@@ -8,8 +8,8 @@ import (
 	twitter "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	twitterAuth "github.com/dghubble/oauth1/twitter"
-	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 )
 
 func TwitterAuthenticationRoutes(e *echo.Echo) {

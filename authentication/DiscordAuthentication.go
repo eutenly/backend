@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 )
 
 type authResp struct {

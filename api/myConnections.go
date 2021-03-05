@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 
-	"../database"
-	"../database/schemas"
+	"eutenly/backend/database"
+	"eutenly/backend/database/schemas"
 
-	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 )
 
 type connectionResp struct {
@@ -27,6 +28,9 @@ type accountDetailsResp struct {
 
 func myConnections(e *echo.Echo) {
 	e.GET("/api/v1/me", func(c echo.Context) error {
+		if os.Getenv("development") == "true" {
+			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+		}
 		//Get session
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
