@@ -1,10 +1,13 @@
 package main
 
 import (
-	"./api"
-	"./authentication"
+	"eutenly/backend/api"
+	"eutenly/backend/authentication"
+	"github.com/labstack/echo/v4/middleware"
+	"net/url"
+	"os"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 func apiRouter(app *echo.Echo) {
@@ -21,4 +24,15 @@ func apiRouter(app *echo.Echo) {
 
 	//top.gg webhook
 	api.TopGGWebhook(app)
+
+	if os.Getenv("development") == "true" {
+		url1, _ := url.Parse("http://localhost:8000")
+		targets := []*middleware.ProxyTarget{
+			{
+				URL: url1,
+			},
+		}
+		app.Group("*").Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
+
+	}
 }

@@ -3,8 +3,8 @@ package authentication
 import (
 	"context"
 	"fmt"
-	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 	"net/http"
 	"os"

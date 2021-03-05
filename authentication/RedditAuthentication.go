@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 )
 

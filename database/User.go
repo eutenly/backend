@@ -1,8 +1,8 @@
 package database
 
 import (
-	"./schemas"
 	"context"
+	"eutenly/backend/database/schemas"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

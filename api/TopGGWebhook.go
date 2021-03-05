@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"../database"
+	"eutenly/backend/database"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type votehook struct {
