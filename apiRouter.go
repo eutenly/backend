@@ -33,6 +33,5 @@ func apiRouter(app *echo.Echo) {
 			},
 		}
 		app.Group("*").Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
-
 	}
 }
