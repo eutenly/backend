@@ -8,6 +8,8 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"os"
+
+	"github.com/maiacodes/fetch"
 )
 
 func GoogleAuthenticationRoutes(e *echo.Echo) {
@@ -19,26 +21,26 @@ func GoogleAuthenticationRoutes(e *echo.Echo) {
 			AuthURL:  "https://accounts.google.com/o/oauth2/v2/auth",
 			TokenURL: "https://oauth2.googleapis.com/token",
 		},
-		RedirectURL: os.Getenv("WEBSERVER_URL") + "/auth/google",
+		RedirectURL: os.Getenv("WEBSERVER_URL") + "/auth/youtube",
 	}
-	e.GET("/login/google", func(c echo.Context) error {
+	e.GET("/login/youtube", func(c echo.Context) error {
 		//Get session
 		sess, _ := session.Get("session", c)
 		if sess.Values["authed"] != true {
-			return c.Redirect(302, "/login/discord?redirect_to=/login/google")
+			return c.Redirect(302, "/login/discord?redirect_to=/login/youtube")
 		}
 
-		redirect := fmt.Sprintf("https://accounts.google.com/o/oauth2/v2/auth?client_id=%v&redirect_uri=%v/auth/google&scope=https://www.googleapis.com/auth/youtube.readonly&response_type=code", os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("WEBSERVER_URL"))
+		redirect := fmt.Sprintf("https://accounts.google.com/o/oauth2/v2/auth?client_id=%v&redirect_uri=%v/auth/youtube&scope=https://www.googleapis.com/auth/youtube.readonly&response_type=code", os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("WEBSERVER_URL"))
 
 		return c.Redirect(http.StatusFound, redirect)
 	})
-	e.GET("/auth/google", func(c echo.Context) error {
+	e.GET("/auth/youtube", func(c echo.Context) error {
 		//Get OAUTH2 login code
 		authCode := c.QueryParam("code")
 
 		//If no token was passed then error
 		if authCode == "" {
-			return loginError(fmt.Errorf("no auth code"), "github", c)
+			return loginError(fmt.Errorf("no auth code"), "youtube", c)
 		}
 
 		//Get session
@@ -50,20 +52,46 @@ func GoogleAuthenticationRoutes(e *echo.Echo) {
 		// Exchange token
 		tok, err := oauthConfig.Exchange(context.TODO(), c.QueryParam("code"))
 		if err != nil {
-			return loginError(err, "google", c)
+			return loginError(err, "youtube", c)
+		}
+
+		// Get user info
+		var r ytResp
+		err = fetch.FetchJSON("https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true", "GET", nil, &r, fetch.FetchOptions{Authorization: "Bearer " + tok.AccessToken})
+		if err != nil {
+			return loginError(err, "youtube", c)
+		}
+		username := "Unknown"
+		id := "unknown"
+		if len(r.Items) != 0 {
+			id = r.Items[0].ID
+			username = r.Items[0].Snippet.Title
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "google", "", "", map[string]string{"accessToken": tok.AccessToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "youtube", id, username, map[string]string{"accessToken": tok.AccessToken})
 		if err != nil {
-			return loginError(err, "github", c)
+			return loginError(err, "youtube", c)
 		}
 
 		//Set auth cookie
-		authCookie("google", c)
+		authCookie("youtube", c)
 
 		//Redirect
 		return c.Redirect(302, "/connections")
 	})
 	return
+}
+
+type ytResp struct {
+	Items []ytChan `json:"items"`
+}
+
+type ytChan struct {
+	ID      string `json:"id"`
+	Snippet ytSnip `json:"snippet"`
+}
+
+type ytSnip struct {
+	Title string `json:"title"`
 }
