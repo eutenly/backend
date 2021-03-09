@@ -44,10 +44,20 @@ func deleteConnection(e *echo.Echo) {
 		connection := fmt.Sprint(body["connection"])
 
 		//If connection exists, remove it
+		var ac string
 		if _, ok := user.Connections[connection]; ok {
+			ac = user.Connections[connection].AccessToken
 			delete(user.Connections, connection)
 		} else {
-			return c.NoContent(500)
+			return c.NoContent(http.StatusNotAcceptable)
+		}
+
+		// Deauthorize Oauth
+		if connection == "youtube" {
+			_, err := http.Post("https://oauth2.googleapis.com/revoke?token="+ac, "application/x-www-form-urlencoded", nil)
+			if err != nil {
+				logrus.Error("Cannot deauth youtube: ", err)
+			}
 		}
 
 		//Send manual `uncache` request to bot
