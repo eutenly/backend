@@ -30,7 +30,7 @@ func GoogleAuthenticationRoutes(e *echo.Echo) {
 			return c.Redirect(302, "/login/discord?redirect_to=/login/youtube")
 		}
 
-		redirect := fmt.Sprintf("https://accounts.google.com/o/oauth2/v2/auth?client_id=%v&redirect_uri=%v/auth/youtube&scope=https://www.googleapis.com/auth/youtube.readonly&response_type=code", os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("WEBSERVER_URL"))
+		redirect := fmt.Sprintf("https://accounts.google.com/o/oauth2/v2/auth?client_id=%v&redirect_uri=%v/auth/youtube&scope=https://www.googleapis.com/auth/youtube.readonly&response_type=code&access_type=offline", os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("WEBSERVER_URL"))
 
 		return c.Redirect(http.StatusFound, redirect)
 	})
@@ -69,7 +69,7 @@ func GoogleAuthenticationRoutes(e *echo.Echo) {
 		}
 
 		//Store tokens
-		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "youtube", id, username, map[string]string{"accessToken": tok.AccessToken})
+		err = storeTokens(fmt.Sprint(sess.Values["discord_id"]), "youtube", id, username, map[string]string{"accessToken": tok.AccessToken, "refreshToken": tok.RefreshToken})
 		if err != nil {
 			return loginError(err, "youtube", c)
 		}
