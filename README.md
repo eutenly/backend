@@ -1,6 +1,8 @@
 # Eutenly Backend Services
 Written in Golang and Echo (for now)
 
+> Legacy Eutenly has been open sourced and archived in favor of a redesigned version
+
 ### How to run this:
 1) Make sure you have the Golang toolchain installed.
 2) In the directory with the Golang files, run `go get -d ./...` to get all the dependencies.
