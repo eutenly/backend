@@ -24,6 +24,7 @@ type User struct {
 	Connections                   map[string]Connection  `bson:"connections,omitempty" structs:"connections,omitempty"`
 	CommandsUsed                  map[string]int32       `bson:"commandsUsed,omitempty" structs:"commandsUsed,omitempty"`
 	SavedLinks                    []SavedLink            `bson:"savedLinks,omitempty" structs:"savedLinks,omitempty"`
+	CompactMode                   bool                   `bson:"compactMode,omitempty" structs:"compactMode,omitempty"`
 	ReactionConfirmationsDisabled bool                   `bson:"reactionConfirmationsDisabled,omitempty" structs:"reactionConfirmationsDisabled,omitempty"`
 	VoteExpireTimestamp           int                    `bson:"voteExpireTimestamp,omitempty" structs:"voteExpireTimestamp,omitempty"`
 	PatreonTier                   int32                  `bson:"patreonTier,omitempty" structs:"patreonTier,omitempty"`
